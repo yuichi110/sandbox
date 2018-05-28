@@ -1,5 +1,5 @@
 # under development.
-# but worked.
+# tested and worked.
 
 # Multiple Ping
 
