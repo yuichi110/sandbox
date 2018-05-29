@@ -1,0 +1,66 @@
+Documentation
+https://scapy.readthedocs.io/en/latest/usage.html#starting-scapy
+
+(1) Make Packet
+
+Syntax: LOWER_LAYER_PROTOCOL / UPPER_LAYER_PROTOCOL
+
+>>> a = Ether() / IP() / ICMP()
+>>> a
+<Ether  type=0x800 |<IP  frag=0 proto=icmp |<ICMP  |>>>
+
+>>> b = IP() / ICMP()
+>>> b
+<IP  frag=0 proto=icmp |<ICMP  |>>
+
+
+(2) Make Packet with param
+
+>>> a = IP(dst='1.2.3.4')
+>>> a
+<IP  dst=1.2.3.4 |>
+>>> a.src = '4.3.2.1'
+>>> a
+<IP  src=4.3.2.1 dst=1.2.3.4 |>
+
+>>> b = Ether()/IP(dst="www.slashdot.org")/TCP()/"GET /index.html HTTP/1.0 \n\n"
+>>> b
+<Ether  type=0x800 |<IP  frag=0 proto=tcp dst=Net('www.slashdot.org') |<TCP  |<Raw  load='GET /index.html HTTP/1.0 \n\n' |>>>>
+
+
+(3) Send packets
+
+# Send IP Packet
+>>> send(IP(dst='www.google.co.jp') / ICMP())
+.
+Sent 1 packets.
+
+# no output message option : verbose
+>>> send(IP(dst='www.google.co.jp') / ICMP(), verbose=0)
+>>>
+
+# Send Eth Frame
+>>> sendp(Ether() / IP(dst='www.google.co.jp') / ICMP(), iface='en0')
+.
+Sent 1 packets.
+
+>>> a = send(IP(dst='www.google.co.jp') / ICMP(), return_packets=True)
+.
+Sent 1 packets.
+>>> len(a)
+1
+>>> a[0]
+<IP  frag=0 proto=icmp dst=172.217.14.67 |<ICMP  |>>
+
+
+(4) TCP Replay
+
+# read from pcap
+>>> a = rdpcap("/spare/captures/isakmp.cap")
+>>> a
+<isakmp.cap: UDP:721 TCP:0 ICMP:0 Other:0>
+
+# send it with sendp
+>>> sendp(a)
+...........
+Sent 11 packets.
